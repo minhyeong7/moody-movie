@@ -1,24 +1,51 @@
-// TMDB API 관련 모듈
+const apiKey = "8cde0962eca9041f7345e9c7ab7a4b7f";
+const moviesDiv = document.getElementById("movies");
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
 
-const TMDB_API_KEY = "YOUR_TMDB_API_KEY"; // 🔑 실제 키 입력
-const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
-/**
- * 장르 ID 배열로 영화 데이터 가져오기
- * @param {Array} genres - TMDB 장르 ID 배열
- * @returns {Promise<Array>} 영화 리스트
- */
-async function fetchMoviesByGenres(genres) {
-  const genreString = genres.join(",");
-  const url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&language=ko-KR&sort_by=popularity.desc&with_genres=${genreString}`;
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("TMDB API 요청 실패");
-    const data = await res.json();
-    return data.results;
-  } catch (error) {
-    console.error("TMDB API 오류:", error);
-    return [];
-  }
+// 인기 영화 가져오기
+async function getPopularMovies() {
+  const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ko-KR&page=1`);
+  const data = await res.json();
+  displayMovies(data.results);
 }
+
+// 영화 검색
+async function searchMovies(query) {
+  if (!query) return;
+  const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=ko-KR&query=${encodeURIComponent(query)}&page=1`);
+  const data = await res.json();
+  displayMovies(data.results);
+}
+
+// 영화 카드 표시
+function displayMovies(movies) {
+  moviesDiv.innerHTML = "";
+  if (!movies || movies.length === 0) {
+    moviesDiv.innerHTML = "<p>검색 결과가 없습니다.</p>";
+    return;
+  }
+
+  movies.forEach(movie => {
+    const card = document.createElement("div");
+    card.classList.add("movie-card");
+    card.innerHTML = `
+      <img src="${movie.poster_path ? IMAGE_BASE + movie.poster_path : ''}" alt="${movie.title}">
+      <h3>${movie.title}</h3>
+      <p>평점: ${movie.vote_average}</p>
+      <p>개봉일: ${movie.release_date || '정보 없음'}</p>
+    `;
+    moviesDiv.appendChild(card);
+  });
+}
+
+// 이벤트
+searchBtn.addEventListener("click", () => {
+  const query = searchInput.value.trim();
+  searchMovies(query);
+});
+
+// 페이지 로드 시 인기 영화 표시
+getPopularMovies();

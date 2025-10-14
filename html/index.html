@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TMDB 영화 검색</title>
+  <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-    
+  <div class="container">
+    <h1>영화 검색</h1>
+    <input type="text" id="search-input" placeholder="영화 제목을 입력하세요">
+    <button id="search-btn">검색</button>
+    <div id="movies" class="movies"></div>
+  </div>
+    <!-- chatbot.html로 이동하는 버튼 -->
+  <a href="chatbot.html">
+    <button type="button">Chatbot으로 이동</button>
+  </a>
+  
+  <script src="../js/api.js"></script>
 </body>
 </html>
