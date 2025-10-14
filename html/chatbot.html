@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>감정 기반 영화 추천 챗봇</title>
+  <link rel="stylesheet" href="../css/chatbot.css">
 </head>
 <body>
-    
+  <div class="chat-container">
+    <header>
+      <h1>🎬 감정 기반 영화 추천 챗봇</h1>
+      <a href="index.html" class="back-btn">← 메인으로</a>
+    </header>
+
+    <div id="chat-box" class="chat-box">
+      <div class="bot-message">
+        안녕하세요 😊<br>지금 기분이 어떤가요? (예: 행복해, 우울해, 답답해 등)
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input id="user-input" type="text" placeholder="감정을 입력하세요..." />
+      <button id="send-btn">전송</button>
+    </div>
+  </div>
+
+  <script src="../js/chatbot.js" defer></script>
 </body>
 </html>
