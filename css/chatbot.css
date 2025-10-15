@@ -116,3 +116,30 @@ html,body{
   cursor:pointer;
 }
 .input-area button:hover{opacity:.9;}
+
+
+/* === 스크롤바 디자인 === */
+.chat-box::-webkit-scrollbar {
+  width: 10px;              /* 스크롤바 두께 */
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: var(--panel);  /* 트랙(바탕)은 패널색 */
+  border-radius: 10px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: var(--accent); /* 스크롤 막대는 주황 포인트색 */
+  border-radius: 10px;
+  border: 2px solid var(--panel);  /* 주변 여백 효과 */
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+  background-color: #ff764f; /* 호버 시 더 밝은 오렌지 */
+}
+
+/* 파이어폭스 호환용 */
+.chat-box {
+  scrollbar-width: thin; /* 얇은 스크롤바 */
+  scrollbar-color: var(--accent) var(--panel);
+}

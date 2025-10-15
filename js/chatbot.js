@@ -58,7 +58,7 @@ async function sendEmotionToServer(emotion) {
   appendMsg("감정을 분석 중이에요 🎬", "bot");
 
   try {
-    const response = await fetch("http://127.0.0.1:5000/emotion", {
+    const response = await fetch("http://192.168.100.69:5000/emotion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
