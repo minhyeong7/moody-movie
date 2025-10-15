@@ -1,23 +1,50 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TMDB 영화 검색</title>
-  <link rel="stylesheet" href="../css/index.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoodyMovie - 메인</title>
+  <link rel="stylesheet" href="../css/index.css"/>
 </head>
 <body>
-  <div class="container">
-    <h1>영화 검색</h1>
-    <input type="text" id="search-input" placeholder="영화 제목을 입력하세요">
-    <button id="search-btn">검색</button>
-    <div id="movies" class="movies"></div>
-  </div>
-    <!-- chatbot.html로 이동하는 버튼 -->
-  <a href="chatbot.html">
-    <button type="button">Chatbot으로 이동</button>
-  </a>
-  
+  <header class="mm-header">
+    <div class="logo-wrap">
+      <img src="../assets/img/chatbot-logo.png" alt="MoodyMovie" class="logo-icon"/>
+      <h1 class="brand">MoodyMovie</h1>
+    </div>
+    <nav>
+      <a class="chatbtn" href="./chatbot.html">챗봇으로 추천받기</a>
+    </nav>
+  </header>
+
+  <main class="mm-main">
+    <!-- 검색 -->
+    <section class="search-section">
+      <div class="search-bar">
+        <input id="search-input" type="text" placeholder="영화 제목을 검색하세요"/>
+        <button id="search-btn" aria-label="검색">🔍</button>
+      </div>
+    </section>
+
+    <!-- 캐러셀 -->
+    <section class="carousel-section">
+      <div id="carousel" class="carousel">
+        <!-- JS로 카드(포스터)가 주입됨 -->
+      </div>
+    </section>
+
+    <!-- 그리드 -->
+    <section class="grid-section">
+      <div id="movies" class="grid">
+        <!-- JS로 카드가 주입됨 -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="mm-footer">© 2025 MoodyMovie</footer>
+
+  <!-- JS -->
   <script src="../js/api.js"></script>
+  <script src="../js/index.js"></script>
 </body>
 </html>

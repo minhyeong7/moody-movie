@@ -1,92 +1,118 @@
-body {
-  font-family: 'Pretendard', sans-serif;
-  background-color: #121212;
-  color: #fff;
-  margin: 0;
-  padding: 0;
+:root{
+  --bg:#241f1f;
+  --panel:#2d2727;
+  --accent:#ff5a2f;
+  --text:#f5f5f5;
+  --muted:#bdbdbd;
+  --card:#322b2b;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin: 40px auto;
-  background: #1f1f1f;
-  border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
-  overflow: hidden;
+@font-face {
+  font-family: 'HakgyoansimWooju';
+  src: url('../assets/fonts/HakgyoansimWooju/HakgyoansimWoojuR.woff2') format('woff2'),
+       url('../assets/fonts/HakgyoansimWooju/HakgyoansimWoojuR.otf') format('opentype'),
+       url('../assets/fonts/HakgyoansimWooju/HakgyoansimWoojuR.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-header {
-  background: #272727;
-  padding: 1rem;
-  text-align: center;
-  position: relative;
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'HakgyoansimWooju';
 }
 
-header h1 {
-  margin: 0;
-  font-size: 1.2rem;
+/* === 헤더 === */
+.cb-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 18px;
+  background:linear-gradient(180deg,#1f1a1a,#251f1f);
+  box-shadow:var(--shadow);
+}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;filter:drop-shadow(0 0 10px rgba(255,90,47,.35))}
+.brand{font-weight:700}
+.back-btn{
+  color:#1b1b1b;
+  background:var(--accent);
+  padding:8px 12px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:700;
 }
 
-.back-btn {
-  position: absolute;
-  left: 10px;
-  top: 12px;
-  color: #bbb;
-  text-decoration: none;
-  font-size: 0.9rem;
+/* === 메인 영역 === */
+.cb-main{
+  max-width:980px;
+  margin:20px auto;
+  display:flex;
+  flex-direction:column;
+  height:calc(100vh - 90px);
+  padding:0 12px;
 }
 
-.chat-box {
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 400px;
+/* === 채팅창 === */
+.chat-box{
+  flex:1;
+  overflow:auto;
+  background:var(--panel);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:var(--shadow);
 }
 
-.bot-message, .user-message {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 12px;
-  line-height: 1.4;
+/* === 메시지 구조 === */
+.row{
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+  margin:8px 0;
 }
+.msg{
+  max-width:75%;
+  padding:12px 14px;
+  border-radius:16px;
+  line-height:1.45;
+}
+.bot{background:var(--card);}
+.user{background:#3b3232;margin-left:auto;}
+.thumb{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,90,47,.2);
+  display:flex;align-items:center;justify-content:center;
+}
+.thumb img{width:22px;height:22px;}
 
-.bot-message {
-  background: #333;
-  align-self: flex-start;
+/* === 입력창 === */
+.input-area{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
 }
-
-.user-message {
-  background: #4a90e2;
-  align-self: flex-end;
+.input-area input{
+  flex:1;
+  background:var(--panel);
+  border:none;
+  outline:none;
+  color:var(--text);
+  padding:12px 14px;
+  border-radius:12px;
+  box-shadow:var(--shadow);
 }
-
-.input-area {
-  display: flex;
-  border-top: 1px solid #333;
+.input-area button{
+  border:none;
+  background:var(--accent);
+  color:#1a1a1a;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
 }
-
-#user-input {
-  flex: 1;
-  padding: 12px;
-  background: #222;
-  color: #fff;
-  border: none;
-  outline: none;
-}
-
-#send-btn {
-  background: #4a90e2;
-  border: none;
-  color: white;
-  padding: 12px 16px;
-  cursor: pointer;
-}
-
-#send-btn:hover {
-  background: #357ABD;
-}
+.input-area button:hover{opacity:.9;}

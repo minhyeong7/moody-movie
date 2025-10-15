@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>감정 기반 영화 추천 챗봇</title>
+  <title>무디무비 챗봇</title>
   <link rel="stylesheet" href="../css/chatbot.css">
 </head>
 <body>
-  <div class="chat-container">
-    <header>
-      <h1>🎬 감정 기반 영화 추천 챗봇</h1>
-      <a href="index.html" class="back-btn">← 메인으로</a>
-    </header>
-
-    <div id="chat-box" class="chat-box">
-      <div class="bot-message">
-        안녕하세요 😊<br>지금 기분이 어떤가요? (예: 행복해, 우울해, 답답해 등)
-      </div>
+  <header class="cb-header">
+    <div class="logo-wrap">
+      <img src="../assets/img/chatbot-logo.png" class="logo-icon" alt="logo"/>
+      <div class="brand">MoodyMovie</div>
     </div>
+    <a href="index.html" class="back-btn">HOME</a>
+  </header>
+    
+  <main class="cb-main">
+    <div id="chat" class="chat-box"></div>
 
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="감정을 입력하세요..." />
+      <input id="user-input" type="text" placeholder="오늘 기분을 한 문장으로 말해보세요. 예) '좀 외롭고 피곤해요'"/>
       <button id="send-btn">전송</button>
     </div>
-  </div>
+  </main>
 
   <script src="../js/chatbot.js" defer></script>
 </body>
