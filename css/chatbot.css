@@ -8,45 +8,63 @@
   --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 
-@font-face {
-  font-family: 'HakgyoansimWooju';
-  src: url('../assets/fonts/HakgyoansimWooju/HakgyoansimWoojuR.woff2') format('woff2'),
-       url('../assets/fonts/HakgyoansimWooju/HakgyoansimWoojuR.otf') format('opentype'),
-       url('../assets/fonts/HakgyoansimWooju/HakgyoansimWoojuR.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+
+/* ===== 기본 구조 ===== */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'HakgyoansimWooju', sans-serif;
+  overflow-x: hidden;
 }
 
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  padding:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:'HakgyoansimWooju';
+.cb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(180deg,#1f1a1a,#251f1f);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: var(--shadow);
+}
+.logo-wrap { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+.logo-icon { 
+  width: 80px;
+  height: 80px; 
+  filter: drop-shadow(0 0 10px rgba(255,90,47,.4)); 
 }
 
-/* === 헤더 === */
-.cb-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:14px 18px;
-  background:linear-gradient(180deg,#1f1a1a,#251f1f);
-  box-shadow:var(--shadow);
+.brand { 
+  margin: 0; 
+  font-size: 20px; 
 }
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo-icon{width:32px;height:32px;filter:drop-shadow(0 0 10px rgba(255,90,47,.35))}
-.brand{font-weight:700}
-.back-btn{
-  color:#1b1b1b;
-  background:var(--accent);
-  padding:8px 12px;
-  border-radius:999px;
-  text-decoration:none;
-  font-weight:700;
+
+.back-btn {
+  width: 30px;
+  height: 30px;
+  fill: white;
+  padding: 8px;
+  background: var(--accent);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.back-btn:hover {
+  background: #ff714d; /* var(--accent)보다 약간 밝은 색 */
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 90, 47, 0.5);
+}
+
 
 /* === 메인 영역 === */
 .cb-main{
@@ -73,7 +91,7 @@ html,body{
   display:flex;
   gap:8px;
   align-items:flex-end;
-  margin:8px 0;
+  margin:16px 0;
 }
 .msg{
   max-width:75%;
@@ -83,12 +101,28 @@ html,body{
 }
 .bot{background:var(--card);}
 .user{background:#3b3232;margin-left:auto;}
-.thumb{
-  width:40px;height:40px;border-radius:50%;
-  background:rgba(255,90,47,.2);
-  display:flex;align-items:center;justify-content:center;
+.thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 90, 47, 0.2);
+
+  /* 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 아이콘이 너무 붙지 않게 약간 여백 */
+  overflow: hidden;
 }
-.thumb img{width:22px;height:22px;}
+
+.thumb img {
+  width: 100%;         /* 부모 크기의 70% 정도 */
+  height: 100%;
+  object-fit: contain; /* 이미지 비율 유지하면서 꽉 채움 */
+  display: block;      /* inline 이미지 하단 여백 제거 */
+}
+
 
 /* === 입력창 === */
 .input-area{
