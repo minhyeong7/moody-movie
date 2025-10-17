@@ -10,12 +10,12 @@
   <header class="mm-header">
     <div class="logo-wrap">
       <img src="../assets/img/chatbot-logo.png" alt="MoodyMovie" class="logo-icon"/>
-      <h1 class="brand">MoodyMovie</h1>
+      <h2 class="brand">MoodyMovie</h2>
     </div>
   </header>
 
   <main class="mm-main">
-    <!-- ✅ 홈 뷰: 검색 + 캐러셀 -->
+    <!-- ✅ 홈 뷰: 3D 슬라이더 + 그리드 -->
     <section id="home-view">
       <section class="search-section">
         <div class="search-bar">
@@ -30,36 +30,53 @@
         <img src="../assets/img/chatbot-logo.png" alt="" />
       </a>
 
-      <section class="genre-selector">
-        <button class="genre-btn active" data-id="35">코미디</button>
-        <button class="genre-btn" data-id="16,10402">애니메이션 / 음악</button>
-        <button class="genre-btn" data-id="80,27,53,9648">범죄 / 스릴러 / 미스터리 / 공포</button>
-        <button class="genre-btn" data-id="10749,10751,18">로맨스 / 가족 /드라마</button>
-        <button class="genre-btn" data-id="28,12">액션 / 모험</button>
-        <button class="genre-btn" data-id="14,878">판타지 / SF</button>
-        <button class="genre-btn" data-id="99,36">다큐 / 역사</button>
-      </section>
+      <div class="main-container">
+        <section class="genre-selector">
+          <button class="genre-btn active" data-id="35">코미디</button>
+          <button class="genre-btn" data-id="16,10402">애니메이션 / 음악</button>
+          <button class="genre-btn" data-id="80,27,53,9648">범죄 / 스릴러 / 미스터리 / 공포</button>
+          <button class="genre-btn" data-id="10749,10751,18">로맨스 / 가족 /드라마</button>
+          <button class="genre-btn" data-id="28,12">액션 / 모험</button>
+          <button class="genre-btn" data-id="14,878">판타지 / SF</button>
+          <button class="genre-btn" data-id="99,36">다큐 / 역사</button>
+        </section>
 
-      <section class="carousel">
-        <div class="ring"></div>
-      </section>
-
-
-    </section>
-
-    <!-- ✅ 검색 결과 뷰: 그리드 전용 -->
-    <section id="results-view" class="hidden">
-      <div class="results-header">
-        <button id="back-home" class="backhome-btn" type="button">HOME</button>
-        <h2 class="results-title">검색 결과</h2>
+        <section class="slider" id="slider">
+          <div class="slider-track" id="slider-track"></div>
+          <div class="movie-detail" id="movie-detail"></div>
+        </section>
       </div>
-      <section class="grid-section">
-        <div id="movies" class="grid"></div>
-      </section>
+      
     </section>
+
+    <!-- ✅ 검색 결과 뷰 -->
+    <section id="results-view" class="hidden">
+      <section class="search-section">
+        <div class="search-bar">
+          <input id="search-input-results" type="text" placeholder="영화 제목을 검색하세요" />
+          <button id="search-btn-results" class="search-btn" type="button">
+            <img src="../assets/img/search-icon.png" alt="검색" />
+          </button>
+        </div>
+      </section>
+
+      <div class="main-container">
+        <h2 class="results-title">검색 결과</h2>
+
+        <div class="grid-section">
+          <div id="movies" class="grid"></div>
+        </div>
+
+        <div class="movie-detail hidden" id="movie-detail-results"></div>
+      </div>
+
+      <button id="scrollTopBtn" title="맨 위로">↑</button>
+    </section>
+
 
   </main>
 
   <script src="../js/index.js" defer></script>
+
 </body>
 </html>
