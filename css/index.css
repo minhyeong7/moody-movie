@@ -6,9 +6,9 @@
   --muted: #bdbdbd;
   --card: #332c2c;
   --shadow: 0 10px 30px rgba(0,0,0,.25);
+  --slider-transition: 0.9s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* ===== 기본 구조 ===== */
 body {
   margin: 0;
   background: var(--bg);
@@ -104,7 +104,6 @@ body {
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(255,255,255,0.2);
   transition: transform .25s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -121,6 +120,20 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 6px 18px rgba(255,90,47,0.35); 
 }
+
+/*============================== main-container =============================*/
+
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.genre-selector {
+  width: 100%;
+  justify-content: center;
+}
+
 
 /*---------genre---------*/
 
@@ -152,136 +165,330 @@ body {
   color: #fff;
 }
 
-/* ===== 캐러셀 전체 ===== */
-.carousel { 
-  position: relative; 
-  width: 100%;
-  height: 600px;
-  perspective: 1200px;
-  overflow: visible;
+/*-----------슬라이더------------*/
+.slider {
+  position: relative;
+  overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  height: 420px;
+  width: 100%;           
+  max-width: none;       
+  justify-content: center;
+  z-index: 9998; 
 }
 
-/* ===== 회전 축 ===== */
-.ring {
-  position: absolute;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-  animation: spin 28s linear infinite;
-  transform-origin: 0 0 0;
+.slider-track {
+  display: flex;
+  gap: 40px;
+  transition: transform var(--slider-transition);
+  will-change: transform;
+  padding: 0 30vw; 
+  box-sizing: content-box;
+  will-change: transform;
+  align-items: center;
 }
 
-/* ===== 회전 애니메이션 ===== */
-@keyframes spin {
-  from {
-    transform: rotateY(0deg);
-  }
-  to {
-    transform: rotateY(360deg);
-  }
-}
-
-/* ===== 포스터 ===== */
+/* 기본 포스터 (클릭 안된 상태) */
 .poster {
-  position: absolute;
+  flex-shrink: 0;
   width: 180px;
   height: 270px;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-  transform-style: preserve-3d;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  transition: transform 0.4s ease, filter 0.3s ease;
   cursor: pointer;
-  transition: transform .3s ease, filter .3s ease;
+  transform: scale(0.9);
+  filter: brightness(0.9);
 }
 
-/* === 포스터 이미지 === */
 .poster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  border-radius: inherit;
 }
 
-/* === hover === */
+/* 중심 강조 */
+.poster.active {
+  transform: scale(1.55) translateZ(60px);
+  filter: brightness(1.15);
+  transition: transform 0.5s ease;
+  z-index: 9999;
+}
+
+.poster:not(.active) {
+  transform: scale(0.9) rotateY(8deg);
+  transition: transform 0.5s ease;
+}
+
 .poster:hover {
-  z-index: 999;
-  filter: brightness(1.1);
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.poster.active:hover {
+  transform: scale(1.55) translateZ(60px);
 }
 
 
-/* --------------------모달-------------------------- */
-.movie-hover-modal {
+/* 양옆 기울기 */
+.poster.left {
+  transform: scale(0.95) rotateY(10deg) translateZ(-10px);
+  filter: brightness(0.8);
+}
+.poster.right {
+  transform: scale(0.95) rotateY(-10deg) translateZ(-10px);
+  filter: brightness(0.8);
+}
+
+/*---호버시 디테일---*/
+.poster .info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 13px;
+}
+.poster:hover .info-overlay {
+  opacity: 1;
+}
+
+/* hover는 단순 강조만 */
+.poster.hovering {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+  z-index: 5;
+}
+
+/*--클릭시 디테일--*/
+.movie-detail {
   position: fixed;
   top: 50%;
-  left: 50%;
-  /* transform: translate(-50%, -50%) scale(1); */
-  background: rgba(30, 25, 25, 0.95);
-  color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
-  width: 380px;
-  max-width: 80%;
-  z-index: 3000;
-  display: none;
-}
-
-
-.modal-content {
-  background: var(--panel);
+  left: calc(50% + 240px);
+  transform: translateY(-50%) scale(0.95);
+  width: 340px;
+  background: var(--card);
   border-radius: 14px;
-  width: 90%; max-width: 480px;
   padding: 20px;
-  display: flex; flex-direction: column; align-items: center;
-  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 10001;
 }
 
-.modal-content img {
-  width: 100%; max-width: 320px; border-radius: 10px;
+.movie-detail.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
 }
-.modal-info { margin-top: 10px; }
-.modal-info h2 { font-size: 22px; margin-bottom: 6px; }
-.modal-info p { font-size: 15px; color: var(--muted); margin: 4px 0; }
-.close-btn {
-  position: absolute; top: 10px; right: 14px;
-  background: none; border: none;
-  color: #fff; font-size: 22px;
-  cursor: pointer;
-  transition: color .2s ease;
-}
-.close-btn:hover { color: var(--accent); }
 
-/* ===== 그리드 ===== */
+.movie-detail.show {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.movie-detail h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.movie-detail p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 4px 0;
+  color: var(--muted);
+}
+
+/* 어두운 배경 오버레이 */
+.dim-layer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 9998;
+}
+.dim-layer.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.dim-layer.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============================= 그리드 =========================== */
+
+.grid-section {
+  display: block;
+  width: 100%;
+  margin: 40px 0;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr); /* ✅ 기본: 데스크톱 4열 */
+  gap: 30px;
+  justify-items: center;
+  padding: 0 20px;
 }
+
+/* ✅ 태블릿 (768px ~ 1023px): 여전히 4열 유지 */
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+}
+
+/* ✅ 모바일 (≤767px): 3열로 변경 */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .movie-card {
+    width: 100%; /* 각 칸 크기에 맞게 자동 조정 */
+  }
+}
+
+.floating-card {
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--card);
+}
+
 .movie-card {
+  position: relative;
   background: var(--card);
   border-radius: 14px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  transition: transform .2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
 }
-.movie-card:hover { transform: translateY(-4px); }
+
+.movie-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
 .movie-card img {
-  width: 100%; height: 260px; object-fit: cover;
-}
-.movie-card .info { padding: 10px 12px; }
-.movie-card h3 { font-size: 16px; margin: 4px 0 6px; }
-.movie-card p { color: var(--muted); font-size: 13px; margin: 2px 0; }
-
-#results-view.hidden, #home-view.hidden { display: none !important; }
-
-footer {
-  position: static; 
-  text-align: left;
-  padding: 10px 20px;
-  color: #aaa;
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
 }
 
+.movie-card .info {
+  padding: 10px 12px;
+}
+
+.movie-card h3 {
+  font-size: 16px;
+  margin: 4px 0 6px;
+}
+
+.movie-card p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 2px 0;
+}
+
+.detail-popup {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  color: #fff;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  padding: 16px;
+  overflow-y: auto;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+.movie-card.active .detail-popup {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.detail-popup h3 {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.detail-popup p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+#results-view.hidden,
+#home-view.hidden {
+  display: none !important;
+}
+
+
+/* ===== 커스텀 스크롤바 ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1b1b; /* 배경 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff754f;
+}
+
+/* ===== TOP 버튼 ===== */
+#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  z-index: 9999;
+}
+
+#scrollTopBtn.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#scrollTopBtn:hover {
+  background: #ff754f;
+  transform: translateY(-4px);
+}
