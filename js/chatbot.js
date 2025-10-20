@@ -39,16 +39,24 @@ async function sendEmotionToServer(emotion) {
 
     const data = await response.json();
 
-    if (data.reply) {
+    // ✅ 응답 처리 부분 수정
+    if (data.emotion && data.movies) {
+      // 영화 목록을 한 줄 문자열로 합치기
+      const movieList = data.movies.map(m => `🎬 ${m.title}`).join("\n");
+      const fullMsg = `감정 분석 결과: ${data.emotion}\n\n추천 영화 목록 🎥\n${movieList}`;
+      appendMsg(fullMsg, "bot");
+    } else if (data.reply) {
       appendMsg(data.reply, "bot");
     } else {
       appendMsg("서버에서 응답이 없어요 😢", "bot");
     }
+
   } catch (error) {
     console.error(error);
     appendMsg("서버 연결에 문제가 생겼어요 😢", "bot");
   }
 }
+
 
 // 버튼 클릭 이벤트
 sendBtn.addEventListener("click", () => {
