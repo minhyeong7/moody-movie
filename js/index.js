@@ -466,38 +466,206 @@ async function handleSearch(inputEl) {
 }
 
 
-// === 홈 검색창 ===
+// ========================= 홈 검색창 ============================
 if (searchBtn && searchInput) {
+  let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+  const saveSearchHistory = (term) => {
+    if (!term) return;
+    searchHistory = [term, ...searchHistory.filter((t) => t !== term)];
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+  };
+
+  const renderHistory = () => {
+    const historyList = document.getElementById("search-history");
+    if (!historyList) return;
+
+    historyList.innerHTML = searchHistory
+      .map((t, i) => `<li>${t}</li>`)
+      .join("");
+    historyList.classList.toggle("hidden", searchHistory.length === 0);
+
+    // 클릭 시 바로 검색 실행
+    historyList.addEventListener("click", (e) => {
+      if (e.target.tagName === "LI") {
+        const q = e.target.textContent.trim();
+        searchInput.value = q;
+        runSearch(q);
+        historyList.classList.add("hidden");
+      }
+    });
+  };
+
+  // 검색 버튼 클릭
   searchBtn.addEventListener("click", () => {
     const q = searchInput.value.trim();
-    if (q) runSearch(q);
+    if (q) {
+      saveSearchHistory(q);
+      renderHistory();
+      runSearch(q);
+    }
   });
 
+  // Enter 입력
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       const q = searchInput.value.trim();
-      if (q) runSearch(q);
+      if (q) {
+        saveSearchHistory(q);
+        renderHistory();
+        runSearch(q);
+      }
     }
   });
+
+  // 포커스 시 기록 표시
+  searchInput.addEventListener("focus", renderHistory);
 }
 
-// === 🔍 검색 결과 페이지 검색창 ===
+// ================ 🔍 검색 결과 페이지 검색창 =======================
 const searchInputResults = document.getElementById("search-input-results");
 const searchBtnResults = document.getElementById("search-btn-results");
+const searchHistoryResults = document.getElementById("search-history-results");
 
 if (searchBtnResults && searchInputResults) {
+  let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+  const saveSearchHistory = (term) => {
+    if (!term) return;
+    searchHistory = [term, ...searchHistory.filter((t) => t !== term)];
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+  };
+
+  const renderHistory = () => {
+    if (!searchHistoryResults) return;
+    if (searchHistory.length === 0) {
+      searchHistoryResults.classList.add("hidden");
+      return;
+    }
+
+    searchHistoryResults.innerHTML = searchHistory
+      .map((t) => `<li>${t}</li>`)
+      .join("");
+    searchHistoryResults.classList.remove("hidden");
+
+    searchHistoryResults.addEventListener("click", (e) => {
+      if (e.target.tagName === "LI") {
+        const q = e.target.textContent.trim();
+        searchInputResults.value = q;
+        runSearch(q);
+        searchHistoryResults.classList.add("hidden");
+      }
+    });
+  };
+
+  // 🔍 검색 버튼 클릭
   searchBtnResults.addEventListener("click", () => {
     const q = searchInputResults.value.trim();
-    if (q) runSearch(q);
+    if (q) {
+      saveSearchHistory(q);
+      renderHistory();
+      runSearch(q);
+    }
   });
 
+  // 🔍 Enter 입력
   searchInputResults.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       const q = searchInputResults.value.trim();
-      if (q) runSearch(q);
+      if (q) {
+        saveSearchHistory(q);
+        renderHistory();
+        runSearch(q);
+      }
     }
   });
+
+  // 🔍 포커스 시 기록 표시
+  searchInputResults.addEventListener("focus", renderHistory);
 }
+
+
+/* ============================================================
+📊 Flask API에서 감정 통계 불러오기
+============================================================ */
+async function loadEmotionStats() {
+  try {
+    const response = await fetch("http://127.0.0.1:5000/stats");
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      const top = data[0];
+      const emotionText = `🧠 이번 주 가장 많이 표현된 감정은 
+        <strong>${top.rep_emotion}</strong> (${top.count}회) 입니다.`;
+      document.getElementById("top-emotion").innerHTML = emotionText;
+    } else {
+      document.getElementById("top-emotion").innerText =
+        "데이터가 아직 없어요 😢";
+    }
+  } catch (err) {
+    console.error("통계 불러오기 실패:", err);
+    document.getElementById("top-emotion").innerText =
+      "서버 연결 오류 😢";
+  }
+}
+
+/* ============================================================
+🎬 Flask API에서 Top10 영화 불러오기
+============================================================ */
+async function loadTop10Movies() {
+  try {
+    const response = await fetch("http://127.0.0.1:5000/top10");
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+      document.getElementById("top10-track").innerHTML =
+        "<p>추천된 영화 데이터가 없습니다 😢</p>";
+      return;
+    }
+
+    // TMDB 포스터 정보 불러오기
+    const tmdbResults = [];
+    for (const item of data) {
+      const query = item.movie.replace(/\(.*?\)/g, "").trim(); // 괄호 제거
+      const search = await fetchTMDB("search/movie", { query });
+      const movieData = search.results[0];
+      if (movieData) {
+        tmdbResults.push(movieData);
+      }
+    }
+
+    // 기존 renderSlider() 재활용해서 Top10 영역에 렌더링
+    const track = document.getElementById("top10-track");
+    track.innerHTML = ""; // 기존 비우기
+
+    tmdbResults.forEach((movie) => {
+      const card = document.createElement("div");
+      card.classList.add("poster");
+      card.dataset.id = movie.id;
+
+      const img = createPosterImg(movie.poster_path, movie.title);
+      const info = document.createElement("div");
+      info.className = "info-overlay";
+      info.innerHTML = `
+        <h4>${movie.title}</h4>
+        <p>⭐ ${movie.vote_average?.toFixed?.(1) ?? "0.0"} | ${movie.release_date?.slice(0, 4) ?? "N/A"}</p>
+      `;
+
+      card.append(img, info);
+      track.appendChild(card);
+    });
+
+    // 동일한 hover / click 효과 적용
+    applyHoverAndClickEffect(tmdbResults);
+
+  } catch (err) {
+    console.error("Top10 로드 실패:", err);
+    document.getElementById("top10-track").innerHTML =
+      "<p>서버 연결 오류 😢</p>";
+  }
+}
+
+
 
 /* ============================================================
  🚀 11. 초기 로드 + 로고 클릭 처리
@@ -527,6 +695,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     searchInput.value = q;
     await runSearch(q);
   } else {
+    await loadEmotionStats();
+    await loadTop10Movies();
     await loadMoviesByGenre("35");
     showView("home");
   }

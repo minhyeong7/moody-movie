@@ -44,6 +44,19 @@ body {
   font-size: 20px; 
 }
 
+/*====== 최다 감정 ========*/
+
+.emotion-summary {
+  text-align: center;
+  margin: 1rem 0;
+  font-family: "Pretendard", sans-serif;
+  color: #e2e0e0;
+}
+.emotion-summary strong {
+  color: #a80c0c;
+  font-weight: bold;
+}
+
 /* ===== 검색 ===== */
 .search-section {
   display: flex;
@@ -94,6 +107,49 @@ body {
   transform: scale(1.05);
   transition: 0.2s;
 }
+
+.search-container {
+  position: relative;
+  flex: 1;
+}
+
+#search-history,
+#search-history-results {
+  position: absolute;
+  top: 48px; /* input 바로 아래 */
+  left: 0;
+  width: 100%;
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  list-style: none;
+  padding: 5px 0;
+  margin: 0;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+#search-history li,
+#search-history-results li {
+  padding: 10px 16px;
+  font-size: 15px;
+  color: var(--text-light, #ccc);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#search-history li:hover,
+#search-history-results li:hover{
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.hidden {
+  display: none;
+} 
 
 /* ===== 챗봇 버튼 ===== */
 .chatbtn.icon {
@@ -325,6 +381,18 @@ body {
 .dim-layer.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.section-title {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  color: var(--accent);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  font-family: "Pretendard", sans-serif;
+  z-index: 9999;
 }
 
 /* ============================= 그리드 =========================== */

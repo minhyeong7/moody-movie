@@ -14,12 +14,21 @@
     </div>
   </header>
 
+  <section id="emotion-summary" class="emotion-summary">
+    <h3>이번 주 가장 많이 표현된 감정은...</h3>
+    <p id="top-emotion">데이터를 불러오는 중이에요 🕐</p>
+  </section>
+
+
   <main class="mm-main">
     <!-- ✅ 홈 뷰: 3D 슬라이더 + 그리드 -->
     <section id="home-view">
       <section class="search-section">
         <div class="search-bar">
-          <input id="search-input" type="text" placeholder="영화 제목을 검색하세요"/>
+          <div class="search-container">
+            <input id="search-input" type="text" placeholder="영화 제목을 검색하세요" />
+            <ul id="search-history" class="hidden"></ul>
+          </div>
           <button id="search-btn" class="search-btn" type="button">
             <img src="../assets/img/search-icon.png" alt="검색" />
           </button>
@@ -41,10 +50,19 @@
           <button class="genre-btn" data-id="99,36">다큐 / 역사</button>
         </section>
 
+        <!-- 메인 장르별 슬라이더 -->
         <section class="slider" id="slider">
           <div class="slider-track" id="slider-track"></div>
           <div class="movie-detail" id="movie-detail"></div>
         </section>
+
+          <!-- Top10 슬라이더 -->
+        <section class="slider" id="top10-slider">
+          <h3 class="section-title">챗봇이 많이 추천한 영화 Top 10 </h3>
+          <div class="slider-track" id="top10-track"></div>
+          <div class="movie-detail hidden" id="top10-detail"></div>
+        </section>>
+
       </div>
       
     </section>
@@ -53,7 +71,10 @@
     <section id="results-view" class="hidden">
       <section class="search-section">
         <div class="search-bar">
-          <input id="search-input-results" type="text" placeholder="영화 제목을 검색하세요" />
+          <div class="search-container">
+            <input id="search-input-results" type="text" placeholder="영화 제목을 검색하세요" />
+            <ul id="search-history-results" class="hidden"></ul>
+          </div>
           <button id="search-btn-results" class="search-btn" type="button">
             <img src="../assets/img/search-icon.png" alt="검색" />
           </button>
