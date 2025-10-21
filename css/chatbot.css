@@ -177,3 +177,38 @@ body {
   scrollbar-width: thin; /* 얇은 스크롤바 */
   scrollbar-color: var(--accent) var(--panel);
 }
+
+
+/* === TMDB 포스터 섹션 === */
+.poster-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+}
+
+.poster-wrap img {
+  width: 110px;
+  height: 160px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.poster-wrap img:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(255,90,47,0.4);
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+  .poster-wrap img {
+    width: 90px;
+    height: 130px;
+  }
+}

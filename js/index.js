@@ -86,57 +86,29 @@ async function fetchTMDB(endpoint, params = {}) {
  🖱️ 5. 슬라이더 hover + click 인터랙션 (중앙 정렬)
 ============================================================ */
 
-function applyHoverAndClickEffect(movies) {
-  const posters = document.querySelectorAll(".poster");
-  const track = document.querySelector(".slider-track");
+function applyHoverAndClickEffect(movies, trackSelector = ".slider-track") {
+  const track = document.querySelector(trackSelector);
+  const posters = track.querySelectorAll(".poster");
   let fixedPoster = null;
+  let currentTranslateX = 0;
 
-  // === dim-layer 생성 ===
-  let dimLayer = document.querySelector(".dim-layer");
-  if (!dimLayer) {
-    dimLayer = document.createElement("div");
-    dimLayer.className = "dim-layer hidden";
-    document.body.appendChild(dimLayer);
-  }
+  const slider = track.closest(".slider");
 
-  // === detail box 생성 ===
-  let detailBox = document.querySelector(".movie-detail");
-  if (!detailBox) {
-    detailBox = document.createElement("div");
-    detailBox.className = "movie-detail hidden";
-    document.body.appendChild(detailBox);
-  }
+  /* 🎬 마우스 벗어날 때 슬라이더 원위치 복귀 */
+  slider.addEventListener("mouseleave", () => {
+    if (fixedPoster) return;
+    track.style.transition = "transform 0.8s ease";
+    track.style.transform = "translateX(0)";
+  });
 
-  // === 닫기 공통 함수 ===
-  const closeDetail = () => {
-    if (!fixedPoster) return;
-
-    // 🔸 detail fade-out
-    detailBox.style.opacity = "0";
-    detailBox.style.transform = "scale(0.95)";
-
-    // 0.4초 뒤 실제 hidden 처리
-    setTimeout(() => {
-      detailBox.classList.add("hidden");
-      dimLayer.classList.add("hidden");
-      fixedPoster.classList.remove("active");
-      fixedPoster.style.zIndex = "";
-      fixedPoster.style.position = "";
-      fixedPoster = null;
-    }, 400);
-  };
-
-  // dim 클릭 시 닫기
-  dimLayer.addEventListener("click", closeDetail);
-
+  /* 😎 Hover 시 포스터 중앙 이동 */
   posters.forEach((poster) => {
-    // === Hover 이동 ===
     poster.addEventListener("mouseenter", () => {
       if (fixedPoster) return;
 
       const style = window.getComputedStyle(track);
       const matrix = new DOMMatrixReadOnly(style.transform);
-      const currentTranslateX = matrix.m41 || 0;
+      currentTranslateX = matrix.m41 || 0;
 
       const rect = poster.getBoundingClientRect();
       const posterCenter = rect.left + rect.width / 2;
@@ -147,33 +119,53 @@ function applyHoverAndClickEffect(movies) {
       track.style.transition = "transform var(--slider-transition)";
       track.style.transform = `translateX(${newTranslateX}px)`;
     });
+  });
 
-    // === 클릭 시 디테일 열기 ===
+  /* 🧩 dim-layer 설정 */
+  let dimLayer = document.querySelector(".dim-layer");
+  if (!dimLayer) {
+    dimLayer = document.createElement("div");
+    dimLayer.className = "dim-layer hidden";
+    document.body.appendChild(dimLayer);
+  }
+
+  /* 📦 디테일 박스 생성 */
+  let detailBox = slider.querySelector(".movie-detail");
+  if (!detailBox) {
+    detailBox = document.createElement("div");
+    detailBox.className = "movie-detail hidden";
+    slider.appendChild(detailBox);
+  }
+
+  /* ❌ 닫기 함수 */
+  const closeDetail = () => {
+    if (!fixedPoster) return;
+    detailBox.style.opacity = "0";
+    detailBox.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      detailBox.classList.add("hidden");
+      dimLayer.classList.add("hidden");
+      fixedPoster.classList.remove("active");
+      fixedPoster = null;
+      slider.style.overflow = "hidden";
+    }, 400);
+  };
+  dimLayer.addEventListener("click", closeDetail);
+
+  /* 🎬 클릭 시 디테일 표시 */
+  posters.forEach((poster) => {
     poster.addEventListener("click", async () => {
-      // 이미 같은 포스터 클릭 → 닫기
       if (fixedPoster === poster) {
         closeDetail();
         return;
       }
 
-      // 기존 상태 초기화
-      posters.forEach(p => {
-        p.classList.remove("active");
-        p.style.zIndex = "";
-        p.style.position = "";
-      });
-
-      // 🌑 dim-layer 활성화
+      posters.forEach(p => p.classList.remove("active"));
+      fixedPoster = poster;
+      poster.classList.add("active");
+      slider.style.overflow = "visible";
       dimLayer.classList.remove("hidden");
 
-      // 🌟 클릭 포스터 강조 (dim 위로 띄우기)
-      poster.classList.add("active");
-      poster.style.position = "relative";
-      poster.style.zIndex = "9999";
-      poster.closest(".slider").style.zIndex = "9998";
-      fixedPoster = poster;
-
-      // TMDB 상세 데이터 요청
       const movieId = poster.dataset.id;
       const data = await fetchTMDB(`movie/${movieId}`);
 
@@ -185,21 +177,23 @@ function applyHoverAndClickEffect(movies) {
         </div>
       `;
 
-      // detail box 위치 계산
-      const rect = poster.getBoundingClientRect();
-      detailBox.style.top = `${window.scrollY + rect.top + rect.height / 2 - detailBox.offsetHeight / 2}px`;
-      detailBox.style.left = `${rect.right + 20}px`;
-      detailBox.style.zIndex = "10000";
+      const sliderRect = slider.getBoundingClientRect();
+      const posterRect = poster.getBoundingClientRect();
 
-      // 초기 상태
-      detailBox.style.opacity = "0";
-      detailBox.style.transform = "scale(0.95)";
+      const relativeTop =
+        posterRect.top - sliderRect.top + poster.offsetHeight * 0.15;
+      const relativeLeft =
+        posterRect.left - sliderRect.left + poster.offsetWidth + 20;
+
+      detailBox.style.position = "absolute";
+      detailBox.style.top = `${relativeTop}px`;
+      detailBox.style.left = `${relativeLeft}px`;
       detailBox.classList.remove("hidden");
 
-      // 브라우저 리렌더 후 페이드 인
-      void detailBox.offsetWidth;
-      detailBox.style.opacity = "1";
-      detailBox.style.transform = "scale(1)";
+      requestAnimationFrame(() => {
+        detailBox.style.opacity = "1";
+        detailBox.style.transform = "scale(1)";
+      });
     });
   });
 }
@@ -254,6 +248,7 @@ async function loadMoviesByGenre(genreIds) {
     // ✅ 랜덤 섞기 + 상위 10개만 표시
     const shuffled = unique.sort(() => Math.random() - 0.5);
     renderSlider(shuffled.slice(0, 10));
+    applyHoverAndClickEffect(shuffled.slice(0, 10), "#slider-track");
 
   } catch (err) {
     console.error("🎬 장르별 영화 로드 실패:", err);
@@ -590,7 +585,7 @@ if (searchBtnResults && searchInputResults) {
 ============================================================ */
 async function loadEmotionStats() {
   try {
-    const response = await fetch("http://127.0.0.1:5000/stats");
+    const response = await fetch("http://192.168.100.69:5000/stats");
     const data = await response.json();
 
     if (data && data.length > 0) {
@@ -614,7 +609,7 @@ async function loadEmotionStats() {
 ============================================================ */
 async function loadTop10Movies() {
   try {
-    const response = await fetch("http://127.0.0.1:5000/top10");
+    const response = await fetch("http://192.168.100.69:5000/top10");
     const data = await response.json();
 
     if (!data || data.length === 0) {
@@ -656,7 +651,7 @@ async function loadTop10Movies() {
     });
 
     // 동일한 hover / click 효과 적용
-    applyHoverAndClickEffect(tmdbResults);
+    applyHoverAndClickEffect(tmdbResults, "#top10-track");
 
   } catch (err) {
     console.error("Top10 로드 실패:", err);

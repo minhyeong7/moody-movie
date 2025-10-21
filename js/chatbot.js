@@ -1,80 +1,164 @@
-// 요소 선택
+// === 요소 선택 ===
 const chatBox = document.getElementById("chat");
 const msgInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 
-// 메시지 UI 함수
-function appendMsg(text, who) {
+// === TMDB API 설정 ===
+const apiKey = "8cde0962eca9041f7345e9c7ab7a4b7f";
+const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+
+// === 상태 변수 ===
+let turn = 0;
+let phase = "emotion"; // emotion → after_recommend
+
+// === 말풍선 메시지 추가 함수 ===
+function appendMsg(text, who = "bot") {
   const row = document.createElement("div");
   row.className = "row";
 
   const bubble = document.createElement("div");
   bubble.className = `msg ${who}`;
-  bubble.innerText = text;
+  bubble.innerHTML = text.replace(/\n/g, "<br>");
 
   if (who === "bot") {
     const thumb = document.createElement("div");
     thumb.className = "thumb";
     thumb.innerHTML = `<img src="../assets/img/chatbot-logo.png" alt="bot">`;
     row.appendChild(thumb);
-    row.appendChild(bubble);
-  } else {
-    row.appendChild(bubble);
   }
 
+  row.appendChild(bubble);
   chatBox.appendChild(row);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 서버에 감정 데이터 전송
-async function sendEmotionToServer(emotion) {
-  appendMsg("감정을 분석 중이에요 🎬", "bot");
-
+// 🆕 TMDB에서 영화 포스터 가져오기 함수
+async function fetchPoster(title) {
   try {
-    const response = await fetch("http://192.168.100.69:5000/emotion", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ emotion }),
-    });
-
-    const data = await response.json();
-
-    // ✅ 응답 처리 부분 수정
-    if (data.emotion && data.movies) {
-      // 영화 목록을 한 줄 문자열로 합치기
-      const movieList = data.movies.map(m => `🎬 ${m.title}`).join("\n");
-      const fullMsg = `감정 분석 결과: ${data.emotion}\n\n추천 영화 목록 🎥\n${movieList}`;
-      appendMsg(fullMsg, "bot");
-    } else if (data.reply) {
-      appendMsg(data.reply, "bot");
-    } else {
-      appendMsg("서버에서 응답이 없어요 😢", "bot");
+    const res = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=ko-KR&query=${encodeURIComponent(title)}&page=1`
+    );
+    const data = await res.json();
+    if (data.results && data.results.length > 0 && data.results[0].poster_path) {
+      return IMAGE_BASE + data.results[0].poster_path;
     }
-
-  } catch (error) {
-    console.error(error);
-    appendMsg("서버 연결에 문제가 생겼어요 😢", "bot");
+    return null;
+  } catch (err) {
+    console.error("TMDB 포스터 가져오기 실패:", err);
+    return null;
   }
 }
 
+// 🆕 영화 포스터들을 채팅창에 표시
+async function displayMoviePosters(movieList) {
+  const row = document.createElement("div");
+  row.className = "row bot-poster-row";
 
-// 버튼 클릭 이벤트
-sendBtn.addEventListener("click", () => {
-  const emotion = msgInput.value.trim();
-  if (!emotion) return;
+  const thumb = document.createElement("div");
+  thumb.className = "thumb";
+  thumb.innerHTML = `<img src="../assets/img/chatbot-logo.png" alt="bot">`;
+  row.appendChild(thumb);
 
-  appendMsg(emotion, "user");
+  const posterWrap = document.createElement("div");
+  posterWrap.className = "poster-wrap";
+
+  for (const m of movieList) {
+    const posterUrl = await fetchPoster(m.title);
+    if (posterUrl) {
+      const img = document.createElement("img");
+      img.src = posterUrl;
+      img.alt = m.title;
+      img.title = m.title;
+      posterWrap.appendChild(img);
+    }
+  }
+
+  row.appendChild(posterWrap);
+  chatBox.appendChild(row);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// ✅ 시작 인사
+window.onload = () => {
+  appendMsg("너의 기분에 맞는 영화를 추천해줄게! 😊<br>오늘 기분이 어때?");
+};
+
+// === 메시지 전송 ===
+async function sendMessage() {
+  const userText = msgInput.value.trim();
+  if (!userText) return;
+
+  appendMsg(userText, "user");
   msgInput.value = "";
-  sendEmotionToServer(emotion);
-});
 
-// 엔터키 입력 이벤트
-msgInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendBtn.click();
-});
+  if (phase === "emotion") {
+    turn++;
+    appendMsg("생각 중...", "bot");
 
-// 초기 인사
-appendMsg(
-  "안녕하세요 😊\n지금 기분이 어떤가요? (예: 행복해, 우울해, 답답해 등)",
-  "bot"
-);
+    try {
+      const res = await fetch("http://192.168.100.69:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText, turn }),
+      });
+
+      const data = await res.json();
+      chatBox.lastChild.remove(); // "생각 중..." 제거
+
+      appendMsg(data.reply, "bot");
+
+      if (data.final) {
+        let combined = "";
+        combined += `🧠 요약: ${data.summary}\n`;
+        combined += `🎭 대표 감정: ${data.emotion}\n`;
+        if (data.sub_emotion && data.sub_emotion !== "세부감정 없음") {
+          combined += `💫 세부 감정: ${data.sub_emotion}\n`;
+        }
+        combined += `🎥 추천 영화 목록:\n`;
+        (data.movies || []).forEach((m) => {
+          combined += `- ${m.title}\n`;
+        });
+
+        appendMsg(combined, "bot");
+
+        // 🆕 TMDB 포스터 표시
+        if (data.movies && data.movies.length > 0) {
+          await displayMoviePosters(data.movies);
+        }
+
+        phase = "after_recommend";
+        turn = 0;
+        appendMsg("내가 추천해준 영화가 마음에 들어? 🎬", "bot");
+      }
+    } catch (err) {
+      console.error(err);
+      appendMsg("⚠️ 서버 연결 오류", "bot");
+    }
+  } else if (phase === "after_recommend") {
+    appendMsg("생각 중...", "bot");
+
+    try {
+      const res = await fetch("http://192.168.100.69:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userText,
+          turn: "after_recommend",
+        }),
+      });
+
+      const data = await res.json();
+      chatBox.lastChild.remove();
+      appendMsg(data.reply, "bot");
+    } catch (err) {
+      console.error(err);
+      appendMsg("⚠️ 서버 연결 오류", "bot");
+    }
+  }
+}
+
+// === 이벤트 ===
+sendBtn.addEventListener("click", sendMessage);
+msgInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
