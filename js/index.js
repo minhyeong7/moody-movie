@@ -583,26 +583,71 @@ if (searchBtnResults && searchInputResults) {
 /* ============================================================
 📊 Flask API에서 감정 통계 불러오기
 ============================================================ */
+/* 📊 감정 통계 + 챗봇 아이콘 자동 변경 */
 async function loadEmotionStats() {
   try {
     const response = await fetch("http://192.168.100.69:5000/stats");
     const data = await response.json();
 
-    if (data && data.length > 0) {
-      const top = data[0];
-      const emotionText = `🧠 이번 주 가장 많이 표현된 감정은 
-        <strong>${top.rep_emotion}</strong> (${top.count}회) 입니다.`;
-      document.getElementById("top-emotion").innerHTML = emotionText;
-    } else {
-      document.getElementById("top-emotion").innerText =
-        "데이터가 아직 없어요 😢";
+    const topEmotionEl = document.getElementById("top-emotion");
+    const iconEl = document.getElementById("emotion-icon");
+
+    if (!data || data.length === 0) {
+      topEmotionEl.innerText = "데이터가 아직 없어요 😢";
+      iconEl.src = "../assets/img/chatbot-logo.png";
+      return;
     }
+
+    // 감정명 - 이미지 파일 매핑
+    const emotionMap = {
+      "분노": "분노.gif",
+      "불안": "불안.gif",
+      "슬픔": "슬픔.gif",
+      "외로움": "외로움.gif",
+      "심심": "심심.gif",
+      "탐구": "탐구.gif",
+      "행복": "행복.gif"
+    };
+
+    let index = 0;
+
+    function showNextEmotion() {
+      const item = data[index];
+      const emotion = item.rep_emotion;
+      const count = item.count;
+
+      // 텍스트 업데이트
+      topEmotionEl.innerHTML = `🧠 이번 주 가장 많이 표현된 감정은 
+        <strong>${emotion}</strong> (${count}회) 입니다.`;
+
+      // 이미지 교체
+      const gifName = emotionMap[emotion] || "chatbot-logo.png";
+      iconEl.src = `../assets/img/${gifName}`;
+
+      // 부드러운 전환 (opacity)
+      topEmotionEl.style.opacity = 0;
+      iconEl.style.opacity = 0;
+      setTimeout(() => {
+        topEmotionEl.style.opacity = 1;
+        iconEl.style.opacity = 1;
+      }, 200);
+
+      // 다음 감정으로 순환
+      index = (index + 1) % data.length;
+      setTimeout(showNextEmotion, 3000); // 3초 간격
+    }
+
+    showNextEmotion();
+
   } catch (err) {
     console.error("통계 불러오기 실패:", err);
-    document.getElementById("top-emotion").innerText =
-      "서버 연결 오류 😢";
+    document.getElementById("top-emotion").innerText = "서버 연결 오류 😢";
   }
 }
+
+// ✅ 페이지 로드시 실행
+document.addEventListener("DOMContentLoaded", loadEmotionStats);
+
 
 /* ============================================================
 🎬 Flask API에서 Top10 영화 불러오기
