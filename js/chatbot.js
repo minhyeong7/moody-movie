@@ -32,6 +32,24 @@ function appendMsg(text, who = "bot") {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// 🌀 스피너 표시 함수
+function showSpinner() {
+  const loadingRow = document.createElement("div");
+  loadingRow.className = "row loading-row";
+
+  const thumb = document.createElement("div");
+  thumb.className = "thumb";
+  thumb.innerHTML = `<img src="../assets/img/chatbot-logo.png" alt="bot">`;
+
+  const spinner = document.createElement("div");
+  spinner.className = "spinner";
+
+  loadingRow.appendChild(thumb);
+  loadingRow.appendChild(spinner);
+  chatBox.appendChild(loadingRow);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 // 🆕 TMDB에서 영화 포스터 가져오기 함수
 async function fetchPoster(title) {
   try {
@@ -93,7 +111,7 @@ async function sendMessage() {
 
   if (phase === "emotion") {
     turn++;
-    appendMsg("생각 중...", "bot");
+    showSpinner(); // 🌀 스피너 표시
 
     try {
       const res = await fetch("http://192.168.100.69:5000/chat", {
@@ -103,7 +121,7 @@ async function sendMessage() {
       });
 
       const data = await res.json();
-      chatBox.lastChild.remove(); // "생각 중..." 제거
+      chatBox.lastChild.remove(); // 스피너 제거
 
       appendMsg(data.reply, "bot");
 
@@ -132,10 +150,11 @@ async function sendMessage() {
       }
     } catch (err) {
       console.error(err);
+      chatBox.lastChild.remove(); // 스피너 제거
       appendMsg("⚠️ 서버 연결 오류", "bot");
     }
   } else if (phase === "after_recommend") {
-    appendMsg("생각 중...", "bot");
+    showSpinner(); // 🌀 스피너 표시
 
     try {
       const res = await fetch("http://192.168.100.69:5000/chat", {
@@ -148,10 +167,11 @@ async function sendMessage() {
       });
 
       const data = await res.json();
-      chatBox.lastChild.remove();
+      chatBox.lastChild.remove(); // 스피너 제거
       appendMsg(data.reply, "bot");
     } catch (err) {
       console.error(err);
+      chatBox.lastChild.remove(); // 스피너 제거
       appendMsg("⚠️ 서버 연결 오류", "bot");
     }
   }
@@ -162,3 +182,5 @@ sendBtn.addEventListener("click", sendMessage);
 msgInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
+
+

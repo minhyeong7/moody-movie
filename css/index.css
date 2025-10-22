@@ -764,3 +764,27 @@ body {
   background: #ff754f;
   transform: translateY(-4px);
 }
+
+
+
+/*로고 애니메이션*/
+.tracking-in-expand {
+  animation: tracking-in-expand 1.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) infinite alternate;
+}
+
+/* ----------------------------------------
+ * tracking-in-expand (텍스트 자간 확장 + 페이드인)
+ * ---------------------------------------- */
+@keyframes tracking-in-expand {
+  0% {
+    letter-spacing: -0.5em;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    letter-spacing: normal;
+    opacity: 1;
+  }
+}
