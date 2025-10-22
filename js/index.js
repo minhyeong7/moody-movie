@@ -302,28 +302,22 @@ function renderGrid(movies) {
     return;
   }
 
-  // ✅ dim-layer 1회만 생성
-  let dimLayer = document.querySelector(".dim-layer");
-  if (!dimLayer) {
-    dimLayer = document.createElement("div");
-    dimLayer.className = "dim-layer";
-    document.body.appendChild(dimLayer);
-  }
-
   let activeCard = null;
 
   const closeDetail = () => {
     if (!activeCard) return;
     activeCard.classList.remove("active");
-    dimLayer.classList.remove("show");
     activeCard = null;
   };
-
-  dimLayer.addEventListener("click", closeDetail);
 
   movies.forEach((movie) => {
     const card = document.createElement("div");
     card.classList.add("movie-card");
+
+    // ✅ 카드 내부 dim-layer 생성
+    const cardDim = document.createElement("div");
+    cardDim.className = "card-dim";
+    card.appendChild(cardDim);
 
     const img = createPosterImg(movie.poster_path, movie.title || "");
     const info = document.createElement("div");
@@ -334,7 +328,6 @@ function renderGrid(movies) {
       <p>${movie.release_date || "개봉일 정보 없음"}</p>
     `;
 
-    // ✅ detail-popup 박스
     const detailPopup = document.createElement("div");
     detailPopup.className = "detail-popup";
 
@@ -349,12 +342,9 @@ function renderGrid(movies) {
         return;
       }
 
-      // 다른 카드 닫기
       if (activeCard) closeDetail();
 
-      // TMDB 상세 데이터 불러오기
       const data = await fetchTMDB(`movie/${movie.id}`);
-
       detailPopup.innerHTML = `
         <h3>${data.title}</h3>
         <p>⭐ ${data.vote_average?.toFixed(1) ?? "0.0"} | ${data.release_date?.slice(0,4) ?? "N/A"}</p>
@@ -362,12 +352,18 @@ function renderGrid(movies) {
       `;
 
       card.classList.add("active");
-      dimLayer.classList.add("show");
       activeCard = card;
     });
   });
+
+  document.addEventListener("click", closeDetail);
 }
 
+
+function setGridChatbotIcon() {
+  const gridIcon = document.getElementById("grid-emotion-icon");
+  gridIcon.src = "../assets/img/grid-chatbot.png";
+}
 
 // === TOP 버튼 기능 ===
 const scrollTopBtn = document.getElementById("scrollTopBtn");
@@ -617,7 +613,7 @@ async function loadEmotionStats() {
       const count = item.count;
 
       // 텍스트 업데이트
-      topEmotionEl.innerHTML = `🧠 이번 주 가장 많이 표현된 감정은 
+      topEmotionEl.innerHTML = `사용자들이 분류된 감정은 
         <strong>${emotion}</strong> (${count}회) 입니다.`;
 
       // 이미지 교체

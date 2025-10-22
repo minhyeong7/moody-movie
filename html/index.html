@@ -15,8 +15,18 @@
   </header>
 
   <section id="emotion-summary" class="emotion-summary">
-    <h3>이번 주 가장 많이 표현된 감정은...</h3>
-    <p id="top-emotion">데이터를 불러오는 중이에요 🕐</p>
+    <div class="emotion-text">    
+      <h3>사용자들이 분류된 감정은...</h3>
+      <p id="top-emotion">데이터를 불러오는 중이에요 🕐</p>
+    </div>
+
+    <div class="chat-wrapper home-chat-inline">
+      <a class="chatbtn icon" href="./chatbot.html">
+        <img id="emotion-icon" src="../assets/img/chatbot-logo.png" alt="챗봇 아이콘" />
+      </a>
+      <div class="chat-tooltip">감정에 맞는 영화를 추천해 드릴게요!</div>
+    </div>
+
   </section>
 
 
@@ -32,12 +42,8 @@
           <button id="search-btn" class="search-btn" type="button">
             <img src="../assets/img/search-icon.png" alt="검색" />
           </button>
-        </div>
+        </div>   
       </section>
-
-      <a class="chatbtn icon" href="./chatbot.html" aria-label="챗봇으로 추천받기">
-        <img id="emotion-icon" src="../assets/img/chatbot-logo.png" alt="" />
-      </a>
 
       <div class="main-container">
         <section class="genre-selector">
@@ -89,6 +95,13 @@
         </div>
 
         <div class="movie-detail hidden" id="movie-detail-results"></div>
+      </div>
+      
+      <div class="chat-wrapper grid-chat">
+        <a id="grid-chatbtn" class="chatbtn-grid icon" href="./chatbot.html">
+          <img id="grid-emotion-icon" src="../assets/img/grid-chatbot.png" alt="챗봇 아이콘" />
+        </a>
+        <div class="chat-tooltip">영화를 추천해 드릴까요?</div>
       </div>
 
       <button id="scrollTopBtn" title="맨 위로">↑</button>
