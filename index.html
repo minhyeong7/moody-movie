@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MoodyMovie - 메인</title>
-  <link rel="stylesheet" href="../css/index.css"/>
+  <link rel="stylesheet" href="./css/index.css"/>
 </head>
 <body>
   <header class="mm-header">
     <div class="logo-wrap">
-      <img src="../assets/img/chatbot-logo.png" alt="MoodyMovie" class="logo-icon"/>
+      <img src="./assets/img/chatbot-logo.png" alt="MoodyMovie" class="logo-icon"/>
       <h2 class="brand tracking-in-expand">MoodyMovie</h2>
     </div>
   </header>
@@ -20,18 +20,16 @@
     </div>
 
     <div class="chat-wrapper home-chat-inline">
-      <a class="chatbtn icon" href="./chatbot.html">
-        <img id="emotion-icon" src="../assets/img/chatbot-logo.png" alt="챗봇 아이콘" />
+      <a class="chatbtn icon" href="./html/chatbot.html">
+        <img id="emotion-icon" src="./assets/img/chatbot-logo.png" alt="챗봇 아이콘" />
       </a>
       <a>챗봇</a>
       <div class="chat-tooltip">감정에 맞는 영화를 추천해 드릴게요!</div>
     </div>
-
   </section>
 
-
   <main class="mm-main">
-    <!-- ✅ 홈 뷰: 3D 슬라이더 + 그리드 -->
+    <!-- ✅ 홈 뷰 -->
     <section id="home-view">
       <section class="search-section">
         <div class="search-bar">
@@ -40,7 +38,7 @@
             <ul id="search-history" class="hidden"></ul>
           </div>
           <button id="search-btn" class="search-btn" type="button">
-            <img src="../assets/img/search-icon.png" alt="검색" />
+            <img src="./assets/img/search-icon.png" alt="검색" />
           </button>
         </div>   
       </section>
@@ -50,27 +48,25 @@
           <button class="genre-btn active" data-id="35">코미디</button>
           <button class="genre-btn" data-id="16,10402">애니메이션 / 음악</button>
           <button class="genre-btn" data-id="80,27,53,9648">범죄 / 스릴러 / 미스터리 / 공포</button>
-          <button class="genre-btn" data-id="10749,10751,18">로맨스 / 가족 /드라마</button>
+          <button class="genre-btn" data-id="10749,10751,18">로맨스 / 가족 / 드라마</button>
           <button class="genre-btn" data-id="28,12">액션 / 모험</button>
           <button class="genre-btn" data-id="14,878">판타지 / SF</button>
           <button class="genre-btn" data-id="99,36">다큐 / 역사</button>
         </section>
 
-        <!-- 메인 장르별 슬라이더 -->
+        <!-- 메인 슬라이더 -->
         <section class="slider" id="slider">
           <div class="slider-track" id="slider-track"></div>
           <div class="movie-detail" id="movie-detail"></div>
         </section>
 
-          <!-- Top10 슬라이더 -->
+        <!-- Top10 슬라이더 -->
         <h3 class="section-title">챗봇이 많이 추천한 영화 Top 10 </h3>
         <section class="slider" id="top10-slider">
           <div class="slider-track" id="top10-track"></div>
           <div class="movie-detail hidden" id="top10-detail"></div>
         </section>
-
       </div>
-      
     </section>
 
     <!-- ✅ 검색 결과 뷰 -->
@@ -82,35 +78,30 @@
             <ul id="search-history-results" class="hidden"></ul>
           </div>
           <button id="search-btn-results" class="search-btn" type="button">
-            <img src="../assets/img/search-icon.png" alt="검색" />
+            <img src="./assets/img/search-icon.png" alt="검색" />
           </button>
         </div>
       </section>
 
       <div class="main-container">
         <h2 class="results-title">검색 결과</h2>
-
         <div class="grid-section">
           <div id="movies" class="grid"></div>
         </div>
-
         <div class="movie-detail hidden" id="movie-detail-results"></div>
       </div>
       
       <div class="chat-wrapper grid-chat">
-        <a id="grid-chatbtn" class="chatbtn-grid icon" href="./chatbot.html">
-          <img id="grid-emotion-icon" src="../assets/img/grid-chatbot.png" alt="챗봇 아이콘" />
+        <a id="grid-chatbtn" class="chatbtn-grid icon" href="./html/chatbot.html">
+          <img id="grid-emotion-icon" src="./assets/img/grid-chatbot.png" alt="챗봇 아이콘" />
         </a>
         <div class="chat-tooltip">영화를 추천해 드릴까요?</div>
       </div>
 
       <button id="scrollTopBtn" title="맨 위로">↑</button>
     </section>
-
-
   </main>
 
-  <script src="../js/index.js" defer></script>
-
+  <script src="./js/index.js" defer></script>
 </body>
 </html>
