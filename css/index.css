@@ -62,7 +62,6 @@ body {
 }
 .emotion-text {
   display: flex;
-  flex-direction: column; /* 위아래 정렬 */
   align-items: center;
   gap: 6px;
   font-family: "Pretendard", sans-serif;
@@ -201,25 +200,22 @@ body {
 }
 
 #grid-chatbtn {
+  background: none !important;
   position: fixed;
   bottom: 90px;
   right: 25px;
-  width: 58px;   /* ✅ 기존 60px → 58px */
-  height: 58px;
-  border-radius: 50%;
-  background: var(--card);
+  width: 79px;   
+  height: 79px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   z-index: 999;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 #grid-chatbtn img {
-  width: 52px;   /* ✅ 이미지 크기도 버튼보다 살짝 작게 */
-  height: 52px;
-  object-fit: contain;
+  width: 100px;   
+  height: auto;
 }
 
 #grid-chatbtn:hover {
@@ -247,6 +243,14 @@ body {
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   z-index: 5;
+}
+
+.chatbot-icon-wrap {
+  display: flex;
+  flex-direction: column; /* 수직 정렬 */
+  align-items: center;    /* 중앙 정렬 */
+  justify-content: center;
+  gap: 2px;               /* 아이콘과 글자 사이 간격 (거의 붙게) */
 }
 
 .home-chat-inline .chatbtn.icon:hover {
@@ -291,14 +295,13 @@ body {
 /* 🔍 그리드 화면: 오른쪽 하단 */
 .grid-chat {
   position: fixed;
-  right: 90px;
-  bottom: 100px;
-  flex-direction: row-reverse; /* 버튼 ← 말풍선 왼쪽 */
+  right: 25px;
+  bottom: 170px;
+  flex-direction: row-reverse;
 }
 
 /* 챗봇 버튼 공통 */
-.chatbtn.icon,
-.chatbtn-grid {
+.chatbtn.icon{
   width: 72px;
   height: 72px;
   background: var(--card);
@@ -311,13 +314,23 @@ body {
   z-index: 5; 
 }
 
-.chatbtn.icon:hover,
-.chatbtn-grid:hover {
+.chatbtn-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.chatbtn.icon:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 18px rgba(255,90,47,0.4);
 }
 
-.grid-chat .chat-tooltip {
+.chatbtn-grid:hover {
+  transform: scale(1.05);
+}
+
+.chat-tooltip {
   background: var(--card);
   color: var(--text);
   font-size: 14px;
@@ -334,6 +347,14 @@ body {
 .grid-chat:hover .chat-tooltip {
   opacity: 1;
   transform: translateY(0);
+}
+
+.chat-wrapper {
+  display: flex;
+  flex-direction: column;  /* 세로 정렬 */
+  align-items: center;     /* 중앙 정렬 */
+  justify-content: center;
+  gap: 2px;                /* 아이콘과 글자 간격 (거의 붙게) */
 }
 
 /* hover 시 활성화 */
